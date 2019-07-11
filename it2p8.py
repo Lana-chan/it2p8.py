@@ -36,6 +36,9 @@ class ImpulseTracker:
 			return -1
 
 		(OrdNum, InsNum, SmpNum, PatNum, Special) = struct.unpack_from("4H6xH", data, offset=0x20)
+		(Speed, Tempo) = struct.unpack_from("2B", data, offset=0x32)
+		self.speed = Speed
+		self.tempo = Tempo
 
 		# if there's a song message:
 		if(Special & 0b1):
@@ -145,6 +148,8 @@ class ImpulseTracker:
 		self.orderlist = []
 		self.pattern = []
 		self.comment = ""
+		self.speed = None
+		self.tempo = None
 
 		if(filename != None):
 			self.read_file(filename)
@@ -188,7 +193,10 @@ __sfx__
 		curpat = []
 
 		for ch in range(0,4):
-			speed = 10
+			# IT speed: 2.5 sec / tempo * speed per note
+			# P8 speed: 1/128 sec * speed per note
+			speed = int(((2.5 / it.tempo) * it.speed) / (1/128))
+
 			cursfx = "01{:02x}0000".format(speed)
 			prevnote = 0
 			previnst = 0
