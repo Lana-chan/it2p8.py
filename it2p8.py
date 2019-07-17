@@ -309,7 +309,8 @@ if __name__ == "__main__":
 	try:
 		output = sys.argv[2]
 	except IndexError:
-		output = "output.p8"
+		filename = os.path.splitext(os.path.basename(sys.argv[1]))
+		output = "{}.p8".format(filename[0])
 
 	# take sys.argv[1] into read_file and do stuff
 	it = ImpulseTracker(sys.argv[1])
