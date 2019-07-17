@@ -200,51 +200,76 @@ __sfx__
 			cursfx = "01{:02x}0000".format(speed)
 			prevnote = 0
 			previnst = 0
+			prevvol = 0
+			preveffect = 0
 
+			rowno = 0
 			# turn channel into sfx
 			for row in pat:
+				rowno += 1
 				try:
 					data = row[ch]
+					
+					try:
+						if(data[0] <= 119):
+							note = data[0]-36
+					except TypeError:
+						# note = NoneType
+						note = prevnote
+
+					try:
+						inst = data[1]-1
+					except TypeError:
+						inst = previnst
+
+					if(data[0] != None and data[0] >= 254):
+						# note cut or note
+						vol = 0
+					else:
+						vol = data[2]
+						if(vol == None):
+							if(data[0] == None):
+								if(preveffect == 5): # fade out
+									vol = 0
+								else:
+									# this is dumb bc prevvol is in p8 range and it gets re-converted into p8 range a few lintes down but i got lazy sorry
+									vol = int(interpol(prevvol,0,7,0,64))
+							else:
+								vol = 64
+						vol = int(interpol(vol,0,64,0,7))
+
+					effect = 0
+					iteffect = data[3]
+					if(iteffect[0] in effectmap):
+						effect = effectmap[iteffect[0]]
+					if(iteffect[0] == 4):
+						if(iteffect[1] & 0x0F):
+							# fade out
+							effect = 5
+						if(iteffect[1] & 0xF0):
+							# fade in
+							effect = 4
+
+					# pico8 needs sfx retrigger
+					if(inst > 7 and previnst == inst and effect == 0):
+						effect = 3
+
+					prevnote = note
+					previnst = inst
+					prevvol = vol
+					preveffect = effect
+				
 				except KeyError:
 					# empty row
-					cursfx += "00000"
-					prevnote = 0
-					previnst = 0
-					continue
-
-				try:
-					note = data[0]-36
-				except TypeError:
-					# note = NoneType
 					note = prevnote
-
-				inst = data[1]-1
-				if(inst == None):
 					inst = previnst
-
-				vol = data[2]
-				if(vol == None):
-					vol = 64
-				vol = int(interpol(vol,0,64,0,7))
-
-				effect = 0
-				iteffect = data[3]
-				if(iteffect[0] in effectmap):
-					effect = effectmap[iteffect[0]]
-				if(iteffect[0] == 4):
-					if(iteffect[1] & 0x0F):
-						# fade out
-						effect = 5
-					if(iteffect[1] & 0xF0):
-						# fade in
-						effect = 4
-
-				# pico8 needs sfx retrigger
-				if(inst > 7 and previnst == inst and effect == 0):
-					effect = 3
-
-				prevnote = note
-				previnst = inst
+					if(preveffect == 5): # note faded out
+						vol = 0
+						prevvol = 0
+					else:
+						vol = prevvol
+					effect = 0
+					preveffect = 0
 
 				rowstr = "{:02x}{:1x}{:1x}{:1x}".format(note, inst, vol, effect)
 				cursfx += rowstr
