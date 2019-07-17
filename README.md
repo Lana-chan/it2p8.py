@@ -41,10 +41,6 @@ Personally, I don't like those effects since I have never been able to get a goo
 
 1. A second script which generates an `.it` samplepack based on a Pico-8 cartridge with the custom SFX instruments so you don't have to build one by hand.
 
-2. Make it so note-cuts and note-offs are parsed in a way that allows the `.it` input to be composed in the standard way rather than needing every note to be inputted in the same way the Pico-8 editor needs them to be.
-
-3. Do not include Pico-8 effect 3 in SFX instruments (retrigger) if instruments have loops (such as arpeggio macros)
-
 ## License
 
 I am releasing this code under the Mozilla license since I want others to be able to build upon this if they want to compose for Pico-8 games more easily. If you do use this in your project (either as a tool or bundling it in somewhere else) please credit me somewhere, and please let me know! I'd love to hear from others using what I've made.
