@@ -290,6 +290,8 @@ __sfx__
 
 		music.append("{:02x}{:02x}{:02x}{:02x}".format(curpat[0],curpat[1],curpat[2],curpat[3]))
 
+	print("total: {} SFXs".format(len(sfxs)))
+
 	# make it so there are loop markers around first and last patterns
 	# this isn't pretty.
 	output += "\n".join(sfxs)
