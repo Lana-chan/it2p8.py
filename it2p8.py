@@ -226,17 +226,17 @@ __sfx__
 						# note cut or note
 						vol = 0
 					else:
-						vol = data[2]
-						if(vol == None):
+						if(data[2] != None):
+							vol = data[2]
+							vol = int(interpol(vol,0,64,0,7))
+						else:
 							if(data[0] == None):
 								if(preveffect == 5): # fade out
 									vol = 0
 								else:
-									# this is dumb bc prevvol is in p8 range and it gets re-converted into p8 range a few lintes down but i got lazy sorry
-									vol = int(interpol(prevvol,0,7,0,64))
+									vol = prevvol
 							else:
-								vol = 64
-						vol = int(interpol(vol,0,64,0,7))
+								vol = 7
 
 					effect = 0
 					iteffect = data[3]
@@ -251,7 +251,7 @@ __sfx__
 							effect = 4
 
 					# pico8 needs sfx retrigger
-					if(inst > 7 and previnst == inst and effect == 0):
+					if(data[0] != None and inst > 7 and previnst == inst and effect == 0):
 						effect = 3
 
 					prevnote = note
