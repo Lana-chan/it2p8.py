@@ -105,8 +105,8 @@ class ImpulseTracker:
 			if(mskvar & 1):
 				# read note
 				note = data[offset]
-				if(note > 119):
-					note = None
+				#if(note > 119):
+				#	note = None
 				offset += 1
 				prevnote[Chn] = note
 			
