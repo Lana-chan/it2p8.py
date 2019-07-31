@@ -251,7 +251,7 @@ __sfx__
 							effect = 4
 
 					# pico8 needs sfx retrigger
-					if(data[0] != None and inst > 7 and previnst == inst and effect == 0):
+					if(inst > 7 and prevnote == note and previnst == inst and effect == 0):
 						effect = 3
 
 					prevnote = note
