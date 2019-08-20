@@ -213,6 +213,8 @@ __sfx__
 					try:
 						if(data[0] <= 119):
 							note = data[0]-36
+						else:
+							note = 0
 					except TypeError:
 						# note = NoneType
 						note = prevnote
