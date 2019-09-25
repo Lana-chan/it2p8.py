@@ -197,7 +197,8 @@ __sfx__
 			# P8 speed: 1/128 sec * speed per note
 			speed = int(((2.5 / it.tempo) * it.speed) / (1/128))
 
-			cursfx = "01{:02x}0000".format(speed)
+			speedsfx = "01{:02x}0000".format(speed)
+			cursfx = ""
 			prevnote = 0
 			previnst = 0
 			prevvol = 0
@@ -244,13 +245,18 @@ __sfx__
 					iteffect = data[3]
 					if(iteffect[0] in effectmap):
 						effect = effectmap[iteffect[0]]
-					if(iteffect[0] == 4):
+					elif(iteffect[0] == 4):
 						if(iteffect[1] & 0x0F):
 							# fade out
 							effect = 5
 						if(iteffect[1] & 0xF0):
 							# fade in
 							effect = 4
+					elif(iteffect[0] == 19): # IT effect 'S'
+						# set this sfx speed different to rest of the song
+						curspeed = iteffect[1]
+						speedsfx = "01{:02x}0000".format(curspeed)
+						
 
 					# pico8 needs sfx retrigger
 					if(inst > 7 and prevnote == note and previnst == inst and effect == 0):
@@ -276,6 +282,8 @@ __sfx__
 				rowstr = "{:02x}{:1x}{:1x}{:1x}".format(note, inst, vol, effect)
 				cursfx += rowstr
 			
+			cursfx = speedsfx + cursfx
+
 			# if sfx is blank, just add turned off channel to music and continue loop
 			if(cursfx[8:] == "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"):
 				curpat.append(64)
