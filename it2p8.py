@@ -11,6 +11,8 @@ import os
 import struct
 import pprint
 
+_EMPTY_SFX = "001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+
 # loads impulsetracker module information
 class ImpulseTracker:
 	# takes filename, passes it to parser
@@ -165,7 +167,7 @@ def interpol(value, leftMin, leftMax, rightMin, rightMax):
 	# Convert the 0-1 range into a value in the right range.
 	return rightMin + (valueScaled * rightSpan)
 
-def it_to_p8(it):
+def it_to_p8(it, start_sfx=None):
 	output = """\
 pico-8 cartridge http://www.pico-8.com
 version 16
@@ -179,12 +181,19 @@ __sfx__
 	# reorganize orderlist into p8 __music__
 
 	sfxs = []
+	instsfx_count = 0
 	music = []
 	effectmap = {7: 1, 8: 2, 5: 3}
 
 	# load custom sfx instruments
 	if(it.message):
 		sfxs= it.message.split("\n")
+		instsfx_count = len(sfxs)
+		if start_sfx == None:
+			start_sfx = instsfx_count
+
+	while len(sfxs) < start_sfx:
+		sfxs.append(_EMPTY_SFX)
 
 	for p in it.orderlist:
 		# p is a pattern index in the .it orderlist
@@ -300,7 +309,8 @@ __sfx__
 
 		music.append("{:02x}{:02x}{:02x}{:02x}".format(curpat[0],curpat[1],curpat[2],curpat[3]))
 
-	print("total: {} SFXs".format(len(sfxs)))
+	print(f"instruments: {instsfx_count} SFXs")
+	print(f"song: {len(sfxs) - start_sfx} SFXs")
 
 	# make it so there are loop markers around first and last patterns
 	# this isn't pretty.
@@ -315,7 +325,7 @@ __sfx__
 if __name__ == "__main__":
 	# check if sys.argv length is right
 	if(len(sys.argv) < 2):
-		print("usage: {} input.it [output.p8]".format(sys.argv[0]))
+		print("usage: {} input.it [output.p8] [start_sfx]".format(sys.argv[0]))
 		sys.exit()
 
 	try:
@@ -324,9 +334,14 @@ if __name__ == "__main__":
 		filename = os.path.splitext(os.path.basename(sys.argv[1]))
 		output = "{}.p8".format(filename[0])
 
+	try:
+		start_sfx = int(sys.argv[3])
+	except IndexError:
+		start_sfx = None
+
 	# take sys.argv[1] into read_file and do stuff
 	it = ImpulseTracker(sys.argv[1])
-	out = it_to_p8(it)
+	out = it_to_p8(it, start_sfx)
 
 	with open(output, "w+") as f:
 		f.write(out)
