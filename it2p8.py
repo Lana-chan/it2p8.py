@@ -152,6 +152,7 @@ class ImpulseTracker:
 		self.comment = ""
 		self.speed = None
 		self.tempo = None
+		self.message = None
 
 		if(filename != None):
 			self.read_file(filename)
