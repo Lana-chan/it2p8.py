@@ -1,5 +1,5 @@
 # it2p8.py
-This is a simple Python script to generate Pico-8 music files from `.it` files. The objective in doing this is to make it easier to compose for Pico-8 by freeing composers from the constrained Pico-8 music editor while still obeying the sound engine limitations. [Here's an example of it in action](https://twitter.com/maplesbian/status/1148878267316932608)
+This is a simple Python script to generate Pico-8 music files from `.it` files. The objective in doing this is to make it easier to compose for Pico-8 by freeing composers from the constrained Pico-8 music editor while still obeying the sound engine limitations. [Here's an example of it in action](https://web.archive.org/web/20210917004026/https://twitter.com/maplesbian/status/1148878267316932608)
 
 ### Disclaimer
 
